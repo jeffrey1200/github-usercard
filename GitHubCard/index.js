@@ -46,10 +46,126 @@ const followersArray = [];
 
 */
 
+const cards = document.querySelector(".cards");
+
+axios
+  .get("https://api.github.com/users/jeffrey1200")
+  .then(response => {
+    // console.log(response.data)
+    // console.log(response.data);
+    userCard(response.data);
+  })
+  .catch(error => {
+    // console.log(error);
+  });
+
+axios.get("https://api.github.com/users/jeffrey1200/followers")
+.then(res => {
+  // console.log(res.data)
+
+  res.data.forEach(item => {
+    console.log(item)
+    let loginInfo = item.login;
+    let https = "https://api.github.com/users/" + loginInfo;
+    axios.get(https).then(result => {
+      // console.log(result.data);
+      userCard(result.data);
+    });
+  });
+});
+
+function userCard(data) {
+  const bigDiv = document.createElement("div");
+  const userImg = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const nameHead = document.createElement("h3");
+  const userName = document.createElement("p");
+  const location = document.createElement("p");
+  const profile = document.createElement("p");
+  const aHref = document.createElement("a");
+  const followersCount = document.createElement("p");
+  const followingCount = document.createElement("p");
+  const biography = document.createElement("p");
+  //class list add
+  bigDiv.classList.add("card");
+  cardInfo.classList.add("card-info");
+  nameHead.classList.add("name");
+  userName.classList.add("username");
+  //append
+  bigDiv.appendChild(userImg);
+  bigDiv.appendChild(cardInfo);
+  cardInfo.appendChild(nameHead);
+  cardInfo.appendChild(userName);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  profile.appendChild(aHref);
+  cardInfo.appendChild(followersCount);
+  cardInfo.appendChild(followingCount);
+  cardInfo.appendChild(biography);
+
+  userImg.setAttribute("src", data.avatar_url);
+  nameHead.textContent = data.name;
+  userName.textContent = data.login;
+  location.textContent = `Location: ${data.location}`;
+  aHref.setAttribute("href", data.html_url);
+  aHref.textContent = `Github: Check their profile`;
+  followersCount.textContent = `Followers: ${data.followers}`;
+  followingCount.textContent = `Followings: ${data.following}`;
+  biography.textContent = `Biography: ${data.bio}`;
+
+  cards.appendChild(bigDiv);
+
+  return bigDiv;
+}
+
+
+
 /* List of LS Instructors Github username's: 
   tetondan
   dustinmyers
   justsml
   luishrd
   bigknell
+*/
+
+/* From Alexander Sierra to Everyone:  04:33 PM
+axios.get("https://api.github.com/users/alexandercsierra/followers")
+  .then(obj => {
+    let otherfollowersArray = obj.data;
+    return otherfollowersArray;})
+  
+  .then(
+    arr => arr.map(user => {
+      let profileURL = "https://api.github.com/users/" + user.login;
+      axios.get(profileURL)
+      .then(response => {
+        let container = document.querySelector(".cards");
+        container.appendChild(createCard(response.data));
+      })
+    })
+    
+  )
+  .catch(error => console.log(error))
+From Christopher Oakes to Everyone:  04:39 PM
+let dustinArray = []
+//console.log(dustinArray)
+//console.log(dustinArray.length)
+
+axios.get('https://api.github.com/users/dustinmyers/followers')
+  .then(response => {
+    // console.log(response)
+    // const dustin = response.data[1].login
+    //console.log(dustin)
+    for (let i = 0; i < response.data.length; i++) {
+      dustinArray.push(response.data[i].login)
+    }
+    dustinArray.forEach((item) => {
+      axios.get(`https://api.github.com/users/${item}`)
+        .then(response => {
+          const myInfo = response.data
+          cards.appendChild(cardMaker(myInfo))
+          //console.log(item)
+        })
+    })
+  })
 */
